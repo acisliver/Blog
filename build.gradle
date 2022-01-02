@@ -15,11 +15,19 @@ plugins {
     id 'eclipse'
     id 'org.springframework.boot' version '2.6.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.github.node-gradle.node' version '3.1.1'
 }
 
-group 'org.example'
+node {
+    version = '14.15.4'
+    npmVersion = '8.3.0'
+    yarnVersion = '1.22.17'
+    distBaseUrl = "https://nodejs.org/dist"
+}
+
+group 'kr.ac'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '8'
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
@@ -28,11 +36,12 @@ repositories {
 dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.h2database:h2:'
     implementation 'org.springframework.session:spring-session-jdbc'
     implementation 'mysql:mysql-connector-java'
+
+    compileOnly 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -40,4 +49,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+task deleteVueArtifact(type: Delete) {
+    delete "src/main/resources/static"
+}
+
+task yarnInstall(type: YarnTask) {
+    description = "Yarn install"
+    args = ['install']
+}
+
+task yarnBuild(type: YarnTask) {
+    description = "Yarn run build"
+    args = ["run", "build"]
 }
