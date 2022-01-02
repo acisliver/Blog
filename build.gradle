@@ -23,6 +23,8 @@ node {
     npmVersion = '8.3.0'
     yarnVersion = '1.22.17'
     distBaseUrl = "https://nodejs.org/dist"
+    workDir = file("${project.projectDir}/src/frontend")
+    yarnWorkDir = file("${project.projectDir}/src/frontend")
 }
 
 group 'kr.ac'
@@ -52,15 +54,22 @@ test {
 }
 
 task deleteVueArtifact(type: Delete) {
+    description = "Delete previous Vue artifact"
     delete "src/main/resources/static"
 }
 
 task yarnInstall(type: YarnTask) {
     description = "Yarn install"
+    workingDir = file("${project.projectDir}/src/frontend")
+    dependsOn('deleteVueArtifact')
     args = ['install']
 }
 
-task yarnBuild(type: YarnTask) {
+task frontendBuild(type: YarnTask) {
     description = "Yarn run build"
+    workingDir = file("${project.projectDir}/src/frontend")
+    dependsOn("yarnInstall")
     args = ["run", "build"]
 }
+
+processResources.dependsOn 'frontendBuild'
